@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Калькулятор</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<script>
+    "use strict"
+
+    function set_response(title, text, target_class) {
+        document.getElementById('response_alert').className = target_class
+        document.getElementById('response_title').textContent = title
+        document.getElementById('response_text').textContent = text
+    }
+
+    function calculate(sad, dad, css, therapy) {
+        let tsc = 60 / css,
+            tpi = tsc * 0.109 + 0.159,
+            imok = ((sad + dad) * tpi) / ((tsc - tpi) * dad),
+            z = 8.055 - 1.674 * therapy - 6.614 * imok
+
+        return Math.round(1 / (1 + Math.pow(Math.E, -z)) * 100)
+    }
+
+    function process() {
+        let form = document.forms['input'],
+            sad = form['sad'].value,
+            dad = form['dad'].value,
+            css = form['css'].value
+
+        if (!(sad && dad && css)) {
+            set_response('', '', '') // Это сотрёт со страницы результат предыдущих вычислений
+            return // Код ниже не выполняется, если хотя бы одно из полей пустое
+        }
+
+        let p = calculate(
+                Number(sad),
+                Number(dad),
+                Number(css),
+                Number(document.querySelector('input[name="TherapyRadios"]:checked').value)
+            )
+
+        let info = '',
+            alert_class = "alert alert-success"
+
+        if (p >= 59) {
+            info = 'Низкий риск сохранения симпатикотонии'
+        } else {
+            info = 'Высокий риск сохранения симпатикотонии'
+            alert_class = "alert alert-danger"
+        }
+        set_response(`Вероятность ${p}%`, info, alert_class)
+    }
+</script>
+<div class="container col-md-12">
+    <h5>Прогнозирование риска сохранения симпатикотонии у пациентов
+        с психовегетативным синдромом после проведения КШ</h5>
+    <form id="input" onsubmit="return false">
+        <div class="form-group">
+            <label>Анксиолитическая терапия (АТ)</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="TherapyRadios" id="therapy_1" value="0" checked>
+                <label class="form-check-label" for="therapy_1">Проводилась</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="TherapyRadios" id="therapy_2" value="1">
+                <label class="form-check-label" for="therapy_2">Не проводилась </label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="sad">Cистолическое артериальное давление (САД)</label>
+                <input required type="number" class="form-control" id="sad" placeholder="мм. рт.ст.">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="dad">Диастолическое артериальное давление (ДАД)</label>
+                <input required type="number" class="form-control" id="dad" placeholder="мм. рт.ст.">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="css">Частота сердечных сокращений в минуту (ЧСС)</label>
+            <input required type="number" class="form-control" id="css" placeholder="уд. в минуту">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block"
+                onclick="try{ process() } catch(e) {set_response('Ошибка', e, 'alert alert-danger')}">Рассчитать
+        </button>
+    </form>
+    <br>
+    <div role="alert" id="response_alert">
+        <h5 class="alert-heading" id="response_title"></h5>
+        <p id="response_text"></p>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>
