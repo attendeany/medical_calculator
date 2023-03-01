@@ -46,12 +46,10 @@
                 Number(document.querySelector('input[name="TherapyRadios"]:checked').value)
             )
 
-        let info = '',
+        let info = 'Низкий риск персистирования симпатикотонии',        // p>=59 default
             alert_class = "alert alert-success"
 
-        if (p >= 59) {
-            info = 'Низкий риск персистирования симпатикотонии'
-        } else {
+        if (p < 59) {
             info = 'Высокий риск персистирования симпатикотонии'
             alert_class = "alert alert-danger"
         }
